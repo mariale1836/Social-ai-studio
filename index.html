@@ -15,7 +15,7 @@ textarea{min-height:110px;resize:vertical}.grid{display:grid;grid-template-colum
 button{border:0;border-radius:12px;padding:14px 18px;font-weight:800;font-size:15px;cursor:pointer}
 .primary{background:#111827;color:white;width:100%;margin-top:18px}.secondary{background:#eef2ff;color:#3730a3}
 .preview{border:2px dashed #cbd5e1;border-radius:14px;padding:25px;text-align:center;color:#64748b}
-#photoPreview{max-width:100%;max-height:300px;border-radius:12px;display:none;margin:12px auto}
+#photoPreview,#videoPhotoPreview{max-width:100%;max-height:300px;border-radius:12px;display:none;margin:12px auto}
 .result{display:none}.result pre{white-space:pre-wrap;background:#f8fafc;padding:16px;border-radius:12px;line-height:1.5}
 .actions{display:flex;gap:10px;flex-wrap:wrap}.small{font-size:13px;color:#64748b}
 @media(max-width:600px){.grid{grid-template-columns:1fr}}
@@ -72,19 +72,64 @@ button{border:0;border-radius:12px;padding:14px 18px;font-weight:800;font-size:1
 </div>
 </section>
 
+<section id="videoGen" class="card result">
+<h2>🎬 Generar video con IA</h2>
+<p class="small">Esta sección prepara todo lo necesario para generar el video. La conexión con un proveedor de IA se activará más adelante.</p>
+
+<label>📸 Foto de referencia</label>
+<img id="videoPhotoPreview">
+
+<label>✍️ Prompt para el video (editable)</label>
+<textarea id="videoPrompt"></textarea>
+
+<div class="grid">
+<div>
+<label>⏱️ Duración</label>
+<select id="videoDuration"><option>10 segundos</option><option>15 segundos</option><option>30 segundos</option><option>60 segundos</option></select>
+</div>
+<div>
+<label>📱 Formato</label>
+<select id="videoFormat"><option>9:16 — TikTok / Reels / Shorts</option><option>1:1 — Facebook / Instagram</option><option>16:9 — YouTube</option></select>
+</div>
+</div>
+
+<label>🔌 Proveedor de video IA</label>
+<select id="videoProvider"></select>
+<p id="providerHint" class="small"></p>
+
+<button class="primary" onclick="generateVideo()">🎥 GENERAR VIDEO</button>
+<p id="videoStatus" class="small"></p>
+</section>
+
 <section class="card">
 <h3>💡 Próxima etapa</h3>
-<p class="small">Esta primera versión funciona sin pagar APIs. La siguiente etapa será conectar generación de imágenes/video y convertirla en una PWA instalable en tu teléfono.</p>
+<p class="small">Esta primera versión funciona sin pagar APIs. La siguiente etapa será conectar un proveedor real de generación de video y convertirla en una PWA instalable en tu teléfono.</p>
 </section>
 </main>
 
+<script src="video-providers.js"></script>
 <script>
 const photo=document.getElementById('photo');
 photo.addEventListener('change',()=>{
  const f=photo.files[0]; if(!f)return;
+ const url=URL.createObjectURL(f);
  const img=document.getElementById('photoPreview');
- img.src=URL.createObjectURL(f); img.style.display='block';
+ img.src=url; img.style.display='block';
+ const videoImg=document.getElementById('videoPhotoPreview');
+ videoImg.src=url; videoImg.style.display='block';
 });
+
+const providerSelect=document.getElementById('videoProvider');
+VIDEO_PROVIDERS.forEach(p=>{
+ const opt=document.createElement('option');
+ opt.value=p.id; opt.textContent=p.free?`${p.name} (gratis)`:p.name;
+ providerSelect.appendChild(opt);
+});
+providerSelect.addEventListener('change',()=>{
+ const provider=getVideoProvider(providerSelect.value);
+ document.getElementById('providerHint').textContent=provider.note||'';
+});
+providerSelect.dispatchEvent(new Event('change'));
 
 function generate(){
  const idea=document.getElementById('idea').value.trim();
@@ -118,11 +163,38 @@ El resultado debe parecer una escena real de una película y estar pensado para 
  document.getElementById('hashtags').textContent=hashtags;
  document.getElementById('result').style.display='block';
  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+
+ document.getElementById('videoPrompt').value=prompt;
+ document.getElementById('videoDuration').value=duration;
+ document.getElementById('videoFormat').value=format;
+ document.getElementById('videoGen').style.display='block';
+ document.getElementById('videoStatus').textContent='';
 }
 
 function copyAll(){
  const text=`PROMPT\n${document.getElementById('prompt').textContent}\n\nTEXTO\n${document.getElementById('caption').textContent}\n\nHASHTAGS\n${document.getElementById('hashtags').textContent}`;
  navigator.clipboard.writeText(text).then(()=>alert('Contenido copiado.'));
+}
+
+function generateVideo(){
+ const provider=getVideoProvider(document.getElementById('videoProvider').value);
+ const status=document.getElementById('videoStatus');
+
+ if(!provider.connected||typeof provider.generate!=='function'){
+  status.textContent='El generador de video está listo para conectar. Selecciona un proveedor para continuar.';
+  return;
+ }
+
+ const payload={
+  prompt:document.getElementById('videoPrompt').value.trim(),
+  duration:document.getElementById('videoDuration').value,
+  format:document.getElementById('videoFormat').value,
+  photoFile:photo.files[0]||null
+ };
+ status.textContent='Generando video…';
+ provider.generate(payload)
+  .then(()=>{status.textContent='Video generado.';})
+  .catch(()=>{status.textContent='No se pudo generar el video. Intenta de nuevo.';});
 }
 
 function saveProject(){
