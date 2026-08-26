@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>Social AI Studio</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f7fb;color:#111827}
+header{background:#111827;color:white;padding:22px 18px;text-align:center}
+header h1{margin:0;font-size:27px}header p{margin:6px 0 0;color:#cbd5e1}
+main{max-width:900px;margin:auto;padding:18px}.card{background:white;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 5px 20px #0000000d}
+label{font-weight:700;display:block;margin:14px 0 8px}textarea,input,select{width:100%;padding:13px;border:1px solid #dbe1ea;border-radius:12px;font-size:15px}
+textarea{min-height:110px;resize:vertical}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+button{border:0;border-radius:12px;padding:14px 18px;font-weight:800;font-size:15px;cursor:pointer}
+.primary{background:#111827;color:white;width:100%;margin-top:18px}.secondary{background:#eef2ff;color:#3730a3}
+.preview{border:2px dashed #cbd5e1;border-radius:14px;padding:25px;text-align:center;color:#64748b}
+#photoPreview{max-width:100%;max-height:300px;border-radius:12px;display:none;margin:12px auto}
+.result{display:none}.result pre{white-space:pre-wrap;background:#f8fafc;padding:16px;border-radius:12px;line-height:1.5}
+.actions{display:flex;gap:10px;flex-wrap:wrap}.small{font-size:13px;color:#64748b}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>🎬 Social AI Studio</h1>
+<p>Tu asistente para crear contenido para redes</p>
+</header>
+
+<main>
+<section class="card">
+<h2>✨ Crear nuevo video</h2>
+
+<label>📸 Foto de referencia</label>
+<input id="photo" type="file" accept="image/*">
+<img id="photoPreview">
+
+<label>✍️ ¿Qué quieres que ocurra?</label>
+<textarea id="idea" placeholder="Ejemplo: Una pareja tiene una discusión porque él llega tarde a casa..."></textarea>
+
+<div class="grid">
+<div>
+<label>🎭 Tipo de contenido</label>
+<select id="category">
+<option>Parejas</option><option>Reflexión</option><option>Motivación</option>
+<option>Humor</option><option>Recetas</option><option>Emprendimiento</option><option>Personalizado</option>
+</select>
+</div>
+<div>
+<label>⏱️ Duración</label>
+<select id="duration"><option>10 segundos</option><option>15 segundos</option><option>30 segundos</option><option>60 segundos</option></select>
+</div>
+</div>
+
+<label>📱 Formato</label>
+<select id="format"><option>9:16 — TikTok / Reels / Shorts</option><option>1:1 — Facebook / Instagram</option><option>16:9 — YouTube</option></select>
+
+<button class="primary" onclick="generate()">✨ GENERAR CONTENIDO</button>
+</section>
+
+<section id="result" class="card result">
+<h2>🎬 Tu contenido</h2>
+<p><b>Prompt para generar el video:</b></p>
+<pre id="prompt"></pre>
+<p><b>📝 Texto para publicar:</b></p>
+<pre id="caption"></pre>
+<p><b>#️⃣ Hashtags:</b></p>
+<pre id="hashtags"></pre>
+<div class="actions">
+<button class="secondary" onclick="copyAll()">📋 Copiar todo</button>
+<button class="secondary" onclick="saveProject()">💾 Guardar proyecto</button>
+</div>
+</section>
+
+<section class="card">
+<h3>💡 Próxima etapa</h3>
+<p class="small">Esta primera versión funciona sin pagar APIs. La siguiente etapa será conectar generación de imágenes/video y convertirla en una PWA instalable en tu teléfono.</p>
+</section>
+</main>
+
+<script>
+const photo=document.getElementById('photo');
+photo.addEventListener('change',()=>{
+ const f=photo.files[0]; if(!f)return;
+ const img=document.getElementById('photoPreview');
+ img.src=URL.createObjectURL(f); img.style.display='block';
+});
+
+function generate(){
+ const idea=document.getElementById('idea').value.trim();
+ if(!idea){alert('Escribe primero qué quieres que ocurra en el video.');return;}
+ const category=document.getElementById('category').value;
+ const duration=document.getElementById('duration').value;
+ const format=document.getElementById('format').value;
+
+ const prompt=`Crea un video cinematográfico, realista y emocional basado en la fotografía proporcionada como referencia.
+
+Mantén la identidad, rostro, edad aproximada, cabello y características físicas de las personas de la fotografía. No las reemplaces ni deformes.
+
+Situación: ${idea}
+
+Tipo de contenido: ${category}.
+Duración: ${duration}.
+Formato: ${format}.
+
+Desarrolla una escena con actuaciones naturales, expresiones faciales creíbles, movimientos suaves y continuidad visual. Utiliza iluminación cinematográfica y primeros planos cuando ayuden a transmitir la emoción.
+
+La historia debe tener un inicio claro, un conflicto y un momento final que genere curiosidad o emoción. No agregues personas innecesarias, no deformes manos o rostros y evita movimientos artificiales.
+
+El resultado debe parecer una escena real de una película y estar pensado para redes sociales.`;
+
+ const caption=`A veces una simple discusión esconde algo mucho más profundo... ¿Tú qué harías en una situación así?`;
+
+ const hashtags='#Historias #Parejas #Reflexiones #Amor #Relaciones #HistoriasDeVida #TikTok #Reels';
+
+ document.getElementById('prompt').textContent=prompt;
+ document.getElementById('caption').textContent=caption;
+ document.getElementById('hashtags').textContent=hashtags;
+ document.getElementById('result').style.display='block';
+ document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+ const text=`PROMPT\n${document.getElementById('prompt').textContent}\n\nTEXTO\n${document.getElementById('caption').textContent}\n\nHASHTAGS\n${document.getElementById('hashtags').textContent}`;
+ navigator.clipboard.writeText(text).then(()=>alert('Contenido copiado.'));
+}
+
+function saveProject(){
+ const projects=JSON.parse(localStorage.getItem('socialAIProjects')||'[]');
+ projects.push({
+  date:new Date().toLocaleString(),
+  idea:document.getElementById('idea').value,
+  prompt:document.getElementById('prompt').textContent,
+  caption:document.getElementById('caption').textContent
+ });
+ localStorage.setItem('socialAIProjects',JSON.stringify(projects));
+ alert('Proyecto guardado en este dispositivo.');
+}
+</script>
+</body>
+</html>
