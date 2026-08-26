@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111827">
 <title>Social AI Studio</title>
+ <link rel="manifest" href="./manifest.webmanifest">
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f7fb;color:#111827}
 header{background:#111827;color:white;padding:22px 18px;text-align:center}
@@ -207,6 +208,13 @@ function saveProject(){
  });
  localStorage.setItem('socialAIProjects',JSON.stringify(projects));
  alert('Proyecto guardado en este dispositivo.');
+}
+</script>
+ <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./Service-worker.js");
+  });
 }
 </script>
 </body>
