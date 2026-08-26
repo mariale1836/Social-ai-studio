@@ -1,0 +1,11 @@
+{
+  "name": "Social AI Studio",
+  "short_name": "Social AI",
+  "description": "Crea contenido, prompts y videos con inteligencia artificial.",
+  "start_url": "/Social-ai-studio/",
+  "scope": "/Social-ai-studio/",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#111827",
+  "orientation": "portrait"
+}
