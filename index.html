@@ -132,7 +132,7 @@ providerSelect.addEventListener('change',()=>{
 });
 providerSelect.dispatchEvent(new Event('change'));
 
-function generate(){
+function generateVideo(){
  const idea=document.getElementById('idea').value.trim();
  if(!idea){alert('Escribe primero qué quieres que ocurra en el video.');return;}
  const category=document.getElementById('category').value;
