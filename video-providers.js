@@ -19,12 +19,75 @@ const VIDEO_PROVIDERS = [
  },
  {
   id: 'local-free',
-  name: 'Modelo abierto / gratuito (por configurar)',
-  connected: false,
+  name: 'LTX Video Fast - Gratis (Hugging Face)',
+  connected: true,
   free: true,
-  note: 'Opción pensada para costo mínimo o gratuito. Pendiente de conectar.',
-  generate: null
- },
+  note: 'Generación gratuita de prueba con LTX Video Fast usando Hugging Face ZeroGPU.',
+  generate: async function(payload) {
+    const { Client, handle_file } = await import(
+      'https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js'
+    );
+
+    const app = await Client.connect('Lightricks/ltx-video-distilled');
+
+    const duration = Math.min(8.5, Math.max(0.3, Number(payload.duration) || 2));
+
+    let height = 512;
+    let width = 512;
+
+    if (payload.format === '9:16') {
+      height = 896;
+      width = 512;
+    } else if (payload.format === '16:9') {
+      height = 512;
+      width = 896;
+    }
+
+    const negativePrompt =
+      'worst quality, inconsistent motion, blurry, jittery, distorted';
+
+    let result;
+
+    if (payload.photoFile) {
+      result = await app.predict('/image_to_video', [
+        payload.prompt,
+        negativePrompt,
+        handle_file(payload.photoFile),
+        null,
+        height,
+        width,
+        'image-to-video',
+        duration,
+        9,
+        42,
+        true,
+        3,
+        false
+      ]);
+    } else {
+      result = await app.predict('/text_to_video', [
+        payload.prompt,
+        negativePrompt,
+        null,
+        null,
+        height,
+        width,
+        'text-to-video',
+        duration,
+        9,
+        42,
+        true,
+        3,
+        false
+      ]);
+    }
+
+    return {
+      videoUrl: result.data[0]?.url || result.data[0],
+      seed: result.data[1]
+    };
+  }
+},
  {
   id: 'runway',
   name: 'Runway ML',
