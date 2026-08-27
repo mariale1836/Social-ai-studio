@@ -100,7 +100,7 @@ button{border:0;border-radius:12px;padding:14px 18px;font-weight:800;font-size:1
 
 <button class="primary" onclick="generateVideo()">🎥 GENERAR VIDEO</button>
 <p id="videoStatus" class="small"></p>
-</section>
+<video id="generatedVideo" controls playsinline style="display:none;width:100%;margin-top:12px;border-radius:12px;"></video></section>
 
 <section class="card">
 <h3>💡 Próxima etapa</h3>
@@ -188,14 +188,31 @@ function generateVideo(){
 
  const payload={
   prompt:document.getElementById('videoPrompt').value.trim(),
-  duration:document.getElementById('videoDuration').value,
+  duration:parseFloat(document.getElementById('videoDuration').value) || 2,
   format:document.getElementById('videoFormat').value,
-  photoFile:photo.files[0]||null
- };
- status.textContent='Generando video…';
- provider.generate(payload)
-  .then(()=>{status.textContent='Video generado.';})
-  .catch(()=>{status.textContent='No se pudo generar el video. Intenta de nuevo.';});
+  photoFile:photo.files[0] || null
+};
+
+const player=document.getElementById('generatedVideo');
+
+status.textContent='Generando video... Esto puede tardar varios minutos.';
+
+provider.generate(payload)
+  .then((result)=>{
+    if(!result || !result.videoUrl){
+      throw new Error('El proveedor no devolvió un archivo de video.');
+    }
+
+    player.src=result.videoUrl;
+    player.style.display='block';
+    player.load();
+
+    status.textContent='✅ Video generado correctamente.';
+  })
+  .catch((error)=>{
+    console.error(error);
+    status.textContent='❌ No se pudo generar el video: ' + (error.message || error);
+  });
 }
 
 function saveProject(){
