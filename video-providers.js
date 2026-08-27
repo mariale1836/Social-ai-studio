@@ -30,15 +30,15 @@ const VIDEO_PROVIDERS = [
 
     const app = await Client.connect('Lightricks/ltx-video-distilled');
 
-    const duration = Math.min(8.5, Math.max(0.3, Number(payload.duration) || 2));
+    const duration = Math.min(8.5, Math.max(0.3, parseFloat(payload.duration) || 2));
 
     let height = 512;
     let width = 512;
 
-    if (payload.format === '9:16') {
+    if (String(payload.format).startsWith('9:16')) {
       height = 896;
       width = 512;
-    } else if (payload.format === '16:9') {
+  } else if (String(payload.format).startsWith('16:9')) {
       height = 512;
       width = 896;
     }
