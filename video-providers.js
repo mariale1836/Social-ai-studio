@@ -49,9 +49,9 @@ const app = await Client.connect(
     const negativePrompt =
       'worst quality, inconsistent motion, blurry, jittery, distorted';
 
-    const imageMotionPrompt =
-  (payload.prompt || '') +
-  '. Natural motion, visible movement, the subject is alive and moving. Subtle head movement, blinking, facial expression changes, body movement, camera motion, realistic animation.';
+   const imageMotionPrompt =
+(payload.prompt || '') +
+'. Animate the original photo only. Preserve exactly the same person, face, hair, clothing, background and camera framing. No scene change, no face change, no morphing, no zoom, no camera movement. Only subtle natural movement such as blinking, breathing and small head movements.';
 let result;
     if (payload.photoFile) {
       result = await app.predict('/image_to_video', [
