@@ -49,11 +49,13 @@ const app = await Client.connect(
     const negativePrompt =
       'worst quality, inconsistent motion, blurry, jittery, distorted';
 
-    let result;
-
+    const imageMotionPrompt =
+  (payload.prompt || '') +
+  '. Natural motion, visible movement, the subject is alive and moving. Subtle head movement, blinking, facial expression changes, body movement, camera motion, realistic animation.';
+let result;
     if (payload.photoFile) {
       result = await app.predict('/image_to_video', [
-        payload.prompt,
+        imageMotionPrompt,
         negativePrompt,
         handle_file(payload.photoFile),
         null,
