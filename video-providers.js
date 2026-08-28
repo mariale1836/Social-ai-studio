@@ -7,7 +7,7 @@
 //    normalmente llamando a una Netlify Function que use la API key del proveedor
 //    de forma segura en el servidor (nunca en este archivo ni en el navegador).
 // La interfaz (index.html) no necesita cambios cuando se agrega o conecta un proveedor.
-
+let hfTokenMemoria = null;
 const VIDEO_PROVIDERS = [
  {
   id: 'pending',
@@ -28,7 +28,7 @@ const VIDEO_PROVIDERS = [
       'https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js'
     );
 
-    let hfToken = sessionStorage.getItem('hfToken');
+   let hfToken = hfTokenMemoria;
 
 if (!hfToken) {
   hfToken = prompt('Pega tu token de Hugging Face (comienza con hf_)');
@@ -37,9 +37,8 @@ if (!hfToken) {
     throw new Error('Token de Hugging Face no válido.');
   }
 
-  sessionStorage.setItem('hfToken', hfToken);
+  hfTokenMemoria = hfToken;
 }
-
 const app = await Client.connect(
   'Lightricks/ltx-video-distilled',
   { token: hfToken }
