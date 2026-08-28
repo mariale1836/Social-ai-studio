@@ -28,10 +28,16 @@ const VIDEO_PROVIDERS = [
       'https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js'
     );
 
-    const hfToken = prompt('Pega tu token de Hugging Face (comienza con hf_)');
+    let hfToken = sessionStorage.getItem('hfToken');
 
-if (!hfToken || !hfToken.startsWith('hf_')) {
-  throw new Error('Token de Hugging Face no válido.');
+if (!hfToken) {
+  hfToken = prompt('Pega tu token de Hugging Face (comienza con hf_)');
+
+  if (!hfToken || !hfToken.startsWith('hf_')) {
+    throw new Error('Token de Hugging Face no válido.');
+  }
+
+  sessionStorage.setItem('hfToken', hfToken);
 }
 
 const app = await Client.connect(
