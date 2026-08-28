@@ -83,7 +83,7 @@ const VIDEO_PROVIDERS = [
     }
 
     return {
-      videoUrl: result.data[0]?.url || result.data[0],
+      videoUrl: result.data[0]?.url || result.data[0]?.video?.url || (typeof result.data[0] === 'string' ? result.data[0] : null),
       seed: result.data[1]
     };
   }
