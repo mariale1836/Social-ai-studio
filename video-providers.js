@@ -28,7 +28,16 @@ const VIDEO_PROVIDERS = [
       'https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js'
     );
 
-    const app = await Client.connect('Lightricks/ltx-video-distilled');
+    const hfToken = prompt('Pega tu token de Hugging Face (comienza con hf_)');
+
+if (!hfToken || !hfToken.startsWith('hf_')) {
+  throw new Error('Token de Hugging Face no válido.');
+}
+
+const app = await Client.connect(
+  'Lightricks/ltx-video-distilled',
+  { token: hfToken }
+);
 
     const duration = Math.min(8.5, Math.max(0.3, parseFloat(payload.duration) || 2));
 
