@@ -60,7 +60,7 @@ Do not change the facial structure or overall appearance.
 Only add subtle natural motion based on this instruction: ${basePrompt}
 Use gentle realistic movements such as blinking, slight head movement, subtle facial expression changes, and small body movement.
 Keep the camera stable and the visual style photorealistic.
-';
+`;
 let result;
     if (payload.photoFile) {
       result = await app.predict('/image_to_video', [
