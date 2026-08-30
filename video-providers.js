@@ -55,7 +55,18 @@ const app = await Client.connect(
 let result;
     if (payload.photoFile) {
       result = await app.predict('/image_to_video', [
-        imageMotionPrompt,
+        const basePrompt = (prompt || "").trim();
+
+const imageMotionPrompt = `
+Animate the uploaded photo as a realistic live-action video.
+Preserve the original image identity exactly.
+Keep the same person, same face, same hairstyle, same clothing, same accessories, same background, and same framing.
+Do not change the image into a cartoon, illustration, painting, anime, 3D render, or stylized art.
+Do not alter facial structure or overall appearance.
+Only add subtle natural motion based on this instruction: ${basePrompt}
+Use gentle realistic movements such as blinking, slight head movement, subtle facial expression changes, and small body movement.
+Keep the camera stable and the visual style photorealistic.
+`;
         negativePrompt,
         handle_file(payload.photoFile),
         null,
