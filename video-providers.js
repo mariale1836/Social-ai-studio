@@ -49,25 +49,23 @@ const app = await Client.connect(
     const negativePrompt =
       'worst quality, inconsistent motion, blurry, jittery, distorted';
 
-   const imageMotionPrompt =
-(payload.prompt || '') +
-'. Animate the original photo only. Preserve exactly the same person, face, hair, clothing, background and camera framing. No scene change, no face change, no morphing, no zoom, no camera movement. Only subtle natural movement such as blinking, breathing and small head movements.';
-let result;
-    if (payload.photoFile) {
-      result = await app.predict('/image_to_video', [
-        const basePrompt = (prompt || "").trim();
+   const basePrompt = (payload.prompt || '').trim();
 
 const imageMotionPrompt = `
 Animate the uploaded photo as a realistic live-action video.
 Preserve the original image identity exactly.
-Keep the same person, same face, same hairstyle, same clothing, same accessories, same background, and same framing.
-Do not change the image into a cartoon, illustration, painting, anime, 3D render, or stylized art.
-Do not alter facial structure or overall appearance.
+Keep the same person, same face, same hairstyle, same clothing, same accessories, same background, and the same framing.
+Do not turn the image into a cartoon, illustration, painting, anime, or stylized art.
+Do not change the facial structure or overall appearance.
 Only add subtle natural motion based on this instruction: ${basePrompt}
 Use gentle realistic movements such as blinking, slight head movement, subtle facial expression changes, and small body movement.
 Keep the camera stable and the visual style photorealistic.
-`;
-        negativePrompt,
+';
+let result;
+    if (payload.photoFile) {
+      result = await app.predict('/image_to_video', [
+       imageMotionPrompt,
+       negativePrompt,
         handle_file(payload.photoFile),
         null,
         height,
