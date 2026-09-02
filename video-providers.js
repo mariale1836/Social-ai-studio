@@ -53,13 +53,14 @@ const app = await Client.connect(
 
    const imageMotionPrompt = `
 ${basePrompt}
-Animate the uploaded photo with very subtle, realistic motion.
-Treat the uploaded image as the exact first frame of the video.
-Preserve the original person, face, skin, hair, clothing, body and background exactly.
-Maintain the same photographic realism, colors, lighting and composition.
-Only add natural blinking, gentle breathing and very small head or body movements.
-Do not redraw, reinterpret, stylize or replace any part of the image.
-The final video must remain photorealistic and look like the original photo coming naturally to life.
+The person in the uploaded photo performs the action described above with clear, visible and natural body movement.
+Animate the person's face, eyes, head, shoulders, arms and body as appropriate for the requested action.
+Keep the camera completely fixed and stationary.
+No zoom, no camera movement, no panning and no scene transition.
+Preserve the original person's identity, face, hair, clothing, body and background.
+Maintain the original photographic realism, lighting, colors and composition.
+Do not redraw, stylize, replace or transform the person.
+Create realistic human motion while keeping the video photorealistic.
 `;
 let result;
     if (payload.photoFile) {
