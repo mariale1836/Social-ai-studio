@@ -1,4 +1,4 @@
-const CACHE_NAME = "social-ai-studio-v4";
+const CACHE_NAME = "social-ai-studio-v5";
 
 const FILES_TO_CACHE = [
   "./",
